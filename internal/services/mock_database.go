@@ -3,6 +3,7 @@ package services
 import (
 	"api-stori/internal/models"
 	"sync"
+	"time"
 )
 
 // MockDatabase simula una base de datos en memoria
@@ -76,6 +77,42 @@ func (db *MockDatabase) GetTransactionsByUserID(userID int) []models.UserTransac
 	var userTransactions []models.UserTransaction
 	for _, transaction := range db.transactions {
 		if transaction.UserID == userID {
+			userTransactions = append(userTransactions, transaction)
+		}
+	}
+
+	return userTransactions
+}
+
+// GetTransactionsByUserIDWithDateRange obtiene las transacciones de un usuario filtradas por rango de fechas
+func (db *MockDatabase) GetTransactionsByUserIDWithDateRange(userID int, fromDate, toDate *time.Time) []models.UserTransaction {
+	db.mutex.RLock()
+	defer db.mutex.RUnlock()
+
+	var userTransactions []models.UserTransaction
+	for _, transaction := range db.transactions {
+		if transaction.UserID != userID {
+			continue
+		}
+
+		// Si no hay filtros de fecha, incluir la transacción
+		if fromDate == nil && toDate == nil {
+			userTransactions = append(userTransactions, transaction)
+			continue
+		}
+
+		// Verificar si la transacción está en el rango de fechas
+		include := true
+
+		if fromDate != nil && transaction.DateTime.Before(*fromDate) {
+			include = false
+		}
+
+		if toDate != nil && transaction.DateTime.After(*toDate) {
+			include = false
+		}
+
+		if include {
 			userTransactions = append(userTransactions, transaction)
 		}
 	}

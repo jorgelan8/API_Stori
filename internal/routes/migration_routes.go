@@ -9,11 +9,7 @@ import (
 )
 
 // SetupMigrationRoutes configura las rutas del servicio de migración
-func SetupMigrationRoutes(router *mux.Router) {
-	// Crear instancias de servicios
-	mockDB := services.NewMockDatabase()
-	migrationService := services.NewMigrationService(mockDB)
-
+func SetupMigrationRoutes(router *mux.Router, migrationService *services.MigrationService) {
 	// Crear handler
 	migrationHandler := handlers.NewMigrationHandler(migrationService)
 
