@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"api-stori/tests/config"
 	"api-stori/tests/test_utils"
 	"bytes"
 	"encoding/json"
@@ -10,13 +11,11 @@ import (
 	"testing"
 )
 
-// Note: setupTestServer is now centralized in test_utils package
-
 func TestHealthEndpoint(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/health")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/health")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -83,7 +82,7 @@ func TestMigrateEndpoint(t *testing.T) {
 	writer.Close()
 
 	// Make request
-	req, err := http.NewRequest("POST", server.URL+"/api/v1/migrate", &buf)
+	req, err := http.NewRequest("POST", server.URL+config.GetPathAPI()+"/migrate", &buf)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
@@ -132,7 +131,7 @@ func TestMigrateEndpointInvalidFile(t *testing.T) {
 	writer.Close()
 
 	// Make request
-	req, err := http.NewRequest("POST", server.URL+"/api/v1/migrate", &buf)
+	req, err := http.NewRequest("POST", server.URL+config.GetPathAPI()+"/migrate", &buf)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
@@ -155,7 +154,7 @@ func TestMigrateEndpointNoFile(t *testing.T) {
 	defer server.Close()
 
 	// Make request without file
-	req, err := http.NewRequest("POST", server.URL+"/api/v1/migrate", nil)
+	req, err := http.NewRequest("POST", server.URL+config.GetPathAPI()+"/migrate", nil)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
@@ -195,7 +194,7 @@ func TestBalanceEndpoint(t *testing.T) {
 	client.Do(req)
 
 	// Test balance endpoint
-	resp, err := http.Get(server.URL + "/api/v1/users/1001/balance")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/users/1001/balance")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -247,7 +246,7 @@ func TestBalanceEndpointWithDateRange(t *testing.T) {
 	client.Do(req)
 
 	// Test balance endpoint with date range
-	url := server.URL + "/api/v1/users/1001/balance?from=2024-01-16T00:00:00Z&to=2024-01-17T23:59:59Z"
+	url := server.URL + config.GetPathAPI() + "/users/1001/balance?from=2024-01-16T00:00:00Z&to=2024-01-17T23:59:59Z"
 	resp, err := http.Get(url)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
@@ -274,7 +273,7 @@ func TestBalanceEndpointUserNotFound(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/users/9999/balance")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/users/9999/balance")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -289,7 +288,7 @@ func TestBalanceEndpointInvalidUserID(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/users/invalid/balance")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/users/invalid/balance")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -304,7 +303,7 @@ func TestBalanceEndpointInvalidDateFormat(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/users/1001/balance?from=invalid-date")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/users/1001/balance?from=invalid-date")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -319,7 +318,7 @@ func TestBalanceEndpointInvalidDateRange(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/users/1001/balance?from=2024-01-20T00:00:00Z&to=2024-01-15T23:59:59Z")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/users/1001/balance?from=2024-01-20T00:00:00Z&to=2024-01-15T23:59:59Z")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -334,7 +333,7 @@ func TestNotFoundEndpoint(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Get(server.URL + "/api/v1/nonexistent")
+	resp, err := http.Get(server.URL + config.GetPathAPI() + "/nonexistent")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -349,7 +348,7 @@ func TestMethodNotAllowed(t *testing.T) {
 	server := test_utils.SetupTestServer()
 	defer server.Close()
 
-	resp, err := http.Post(server.URL+"/api/v1/health", "application/json", nil)
+	resp, err := http.Post(server.URL+config.GetPathAPI()+"/health", "application/json", nil)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}

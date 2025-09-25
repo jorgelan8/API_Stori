@@ -3,6 +3,7 @@ package handlers
 import (
 	"api-stori/internal/models"
 	"api-stori/internal/services"
+	"api-stori/tests/config"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -63,7 +64,7 @@ func TestBalanceHandler_GetUserBalance(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create request with URL parameters
-			req, err := http.NewRequest("GET", "/api/v1/users/"+tt.userID+"/balance", nil)
+			req, err := http.NewRequest("GET", config.GetPathAPI()+"/users/"+tt.userID+"/balance", nil)
 			if err != nil {
 				t.Fatalf("Expected no error creating request, got %v", err)
 			}
@@ -73,7 +74,7 @@ func TestBalanceHandler_GetUserBalance(t *testing.T) {
 
 			// Create router and add route with parameter
 			router := mux.NewRouter()
-			router.HandleFunc("/api/v1/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
+			router.HandleFunc(config.GetPathAPI()+"/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
 
 			// Serve the request
 			router.ServeHTTP(rr, req)
@@ -121,14 +122,14 @@ func TestBalanceHandler_GetUserBalanceWithDateRange(t *testing.T) {
 	}
 
 	// Test with date range
-	req, err := http.NewRequest("GET", "/api/v1/users/1001/balance?from=2024-01-16T00:00:00Z&to=2024-01-17T23:59:59Z", nil)
+	req, err := http.NewRequest("GET", config.GetPathAPI()+"/users/1001/balance?from=2024-01-16T00:00:00Z&to=2024-01-17T23:59:59Z", nil)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
+		router.HandleFunc(config.GetPathAPI()+"/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
 	router.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
@@ -157,14 +158,14 @@ func TestBalanceHandler_GetUserBalanceInvalidDateFormat(t *testing.T) {
 	handler := NewBalanceHandler(usersService)
 
 	// Test with invalid date format
-	req, err := http.NewRequest("GET", "/api/v1/users/1001/balance?from=invalid-date", nil)
+	req, err := http.NewRequest("GET", config.GetPathAPI()+"/users/1001/balance?from=invalid-date", nil)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
+		router.HandleFunc(config.GetPathAPI()+"/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
 	router.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusBadRequest {
@@ -179,14 +180,14 @@ func TestBalanceHandler_GetUserBalanceInvalidDateRange(t *testing.T) {
 	handler := NewBalanceHandler(usersService)
 
 	// Test with invalid date range (from > to)
-	req, err := http.NewRequest("GET", "/api/v1/users/1001/balance?from=2024-01-20T00:00:00Z&to=2024-01-15T23:59:59Z", nil)
+	req, err := http.NewRequest("GET", config.GetPathAPI()+"/users/1001/balance?from=2024-01-20T00:00:00Z&to=2024-01-15T23:59:59Z", nil)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
+		router.HandleFunc(config.GetPathAPI()+"/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
 	router.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusBadRequest {
@@ -201,14 +202,14 @@ func TestBalanceHandler_GetUserBalanceWithSpecialCharactersInURL(t *testing.T) {
 	handler := NewBalanceHandler(usersService)
 
 	// Test with special characters in URL (this should fail gracefully)
-	req, err := http.NewRequest("GET", "/api/v1/users/1001/balance?from=2024-01-15T00:00:00Z&to=2024-01-20T23:59:59Z&extra=/path/with/slashes", nil)
+	req, err := http.NewRequest("GET", config.GetPathAPI()+"/users/1001/balance?from=2024-01-15T00:00:00Z&to=2024-01-20T23:59:59Z&extra=/path/with/slashes", nil)
 	if err != nil {
 		t.Fatalf("Expected no error creating request, got %v", err)
 	}
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
+		router.HandleFunc(config.GetPathAPI()+"/users/{user_id}/balance", handler.GetUserBalance).Methods("GET")
 	router.ServeHTTP(rr, req)
 
 	// Should still work because Gorilla Mux properly extracts the user_id parameter
