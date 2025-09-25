@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"api-stori/internal/services"
-	"encoding/json"
 	"net/http"
 )
 
@@ -56,31 +55,12 @@ func (h *MigrationHandler) MigrateCSV(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Procesar el archivo CSV
-	result, err := h.migrationService.ProcessCSV(file)
+	_, err = h.migrationService.ProcessCSV(file)
 	if err != nil {
 		http.Error(w, "Error processing CSV: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Preparar respuesta
-	response := map[string]interface{}{
-		"success": true,
-		"message": "Migration completed successfully",
-		"data": map[string]interface{}{
-			"filename":        header.Filename,
-			"total_records":   result.TotalRecords,
-			"success_records": result.SuccessRecords,
-			"error_records":   result.ErrorRecords,
-			"transactions":    result.Transactions,
-		},
-	}
-
-	// Escribir respuesta JSON
-	w.Header().Set("Content-Type", "application/json")
+	// Devolver solo código HTTP 200 OK sin body
 	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
 }
