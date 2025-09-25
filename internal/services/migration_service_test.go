@@ -19,32 +19,45 @@ func TestMigrationService_ProcessCSV(t *testing.T) {
 
 	reader := strings.NewReader(csvContent)
 
-	result, err := service.ProcessCSV(reader)
+	stats, err := service.ProcessCSV(reader)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
-	// Check result
-	if result.TotalRecords != 3 {
-		t.Errorf("Expected 3 total records, got %d", result.TotalRecords)
+	// Check stats
+	if stats.TotalRecords != 3 {
+		t.Errorf("Expected 3 total records, got %d", stats.TotalRecords)
 	}
 
-	if result.SuccessRecords != 3 {
-		t.Errorf("Expected 3 success records, got %d", result.SuccessRecords)
+	if stats.SuccessRecords != 3 {
+		t.Errorf("Expected 3 success records, got %d", stats.SuccessRecords)
 	}
 
-	if result.ErrorRecords != 0 {
-		t.Errorf("Expected 0 error records, got %d", result.ErrorRecords)
+	if stats.ErrorRecords != 0 {
+		t.Errorf("Expected 0 error records, got %d", stats.ErrorRecords)
 	}
 
-	if len(result.Transactions) != 3 {
-		t.Errorf("Expected 3 transactions, got %d", len(result.Transactions))
+	// Verificar que no hay errores
+	if len(stats.Errors) != 0 {
+		t.Errorf("Expected 0 errors, got %d: %v", len(stats.Errors), stats.Errors)
 	}
 
-	// Verify first transaction
-	firstTx := result.Transactions[0]
-	if firstTx.ID != 1 {
-		t.Errorf("Expected ID 1, got %d", firstTx.ID)
+	// Verificar que las transacciones se guardaron en la base de datos
+	allTransactions := db.GetAllTransactions()
+	if len(allTransactions) != 3 {
+		t.Errorf("Expected 3 transactions in database, got %d", len(allTransactions))
+	}
+
+	// Verificar primera transacción en la base de datos
+	var firstTx *models.UserTransaction
+	for _, tx := range allTransactions {
+		if tx.ID == 1 {
+			firstTx = &tx
+			break
+		}
+	}
+	if firstTx == nil {
+		t.Fatal("Transaction with ID 1 not found in database")
 	}
 	if firstTx.UserID != 1001 {
 		t.Errorf("Expected UserID 1001, got %d", firstTx.UserID)
@@ -66,18 +79,29 @@ func TestMigrationService_ProcessCSVWithErrors(t *testing.T) {
 
 	reader := strings.NewReader(csvContent)
 
-	result, err := service.ProcessCSV(reader)
+	stats, err := service.ProcessCSV(reader)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
 
 	// Should have 1 error record
-	if result.ErrorRecords != 1 {
-		t.Errorf("Expected 1 error record, got %d", result.ErrorRecords)
+	if stats.ErrorRecords != 1 {
+		t.Errorf("Expected 1 error record, got %d", stats.ErrorRecords)
 	}
 
-	if result.SuccessRecords != 2 {
-		t.Errorf("Expected 2 success records, got %d", result.SuccessRecords)
+	if stats.SuccessRecords != 2 {
+		t.Errorf("Expected 2 success records, got %d", stats.SuccessRecords)
+	}
+
+	// Verificar que hay errores específicos
+	if len(stats.Errors) != 1 {
+		t.Errorf("Expected 1 error message, got %d", len(stats.Errors))
+	}
+
+	// Verificar que las transacciones exitosas se guardaron en la base de datos
+	allTransactions := db.GetAllTransactions()
+	if len(allTransactions) != 2 {
+		t.Errorf("Expected 2 transactions in database, got %d", len(allTransactions))
 	}
 }
 

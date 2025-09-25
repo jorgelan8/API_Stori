@@ -11,7 +11,8 @@ import (
 
 // MigrationService maneja la migración de datos desde archivos CSV
 type MigrationService struct {
-	database *MockDatabase
+	database      *MockDatabase
+	reportService *ReportService
 }
 
 // NewMigrationService crea una nueva instancia de MigrationService
@@ -21,16 +22,70 @@ func NewMigrationService(database *MockDatabase) *MigrationService {
 	}
 }
 
-// MigrationResult representa el resultado de una migración
-type MigrationResult struct {
-	TotalRecords   int                      `json:"total_records"`
-	SuccessRecords int                      `json:"success_records"`
-	ErrorRecords   int                      `json:"error_records"`
-	Transactions   []models.UserTransaction `json:"transactions,omitempty"`
+// SetReportService establece el servicio de reportes
+func (ms *MigrationService) SetReportService(reportService *ReportService) {
+	ms.reportService = reportService
+}
+
+// MigrationStats representa las estadísticas de migración (usado tanto para procesamiento como respuesta)
+type MigrationStats struct {
+	TotalRecords   int      `json:"total_records"`
+	SuccessRecords int      `json:"success_records"`
+	ErrorRecords   int      `json:"error_records"`
+	Errors         []string `json:"errors,omitempty"`
+
+	// Campos internos para cálculos (no se serializan en JSON)
+	UsersAffected  map[int]bool
+	TotalAmount    float64
+	LargestAmount  float64
+	SmallestAmount float64
+	FirstDate      time.Time
+	LastDate       time.Time
+}
+
+// NewMigrationStats crea una nueva instancia de estadísticas
+func NewMigrationStats() *MigrationStats {
+	return &MigrationStats{
+		UsersAffected: make(map[int]bool),
+		Errors:        []string{},
+	}
+}
+
+// UpdateSuccess actualiza las estadísticas para una transacción exitosa
+func (ms *MigrationStats) UpdateSuccess(transaction models.UserTransaction) {
+	ms.SuccessRecords++
+	ms.UsersAffected[transaction.UserID] = true
+	ms.TotalAmount += transaction.Amount
+
+	// Actualizar montos
+	if transaction.Amount > ms.LargestAmount {
+		ms.LargestAmount = transaction.Amount
+	}
+	if transaction.Amount < ms.SmallestAmount || ms.SmallestAmount == 0 {
+		ms.SmallestAmount = transaction.Amount
+	}
+
+	// Actualizar fechas
+	if ms.FirstDate.IsZero() || transaction.DateTime.Before(ms.FirstDate) {
+		ms.FirstDate = transaction.DateTime
+	}
+	if ms.LastDate.IsZero() || transaction.DateTime.After(ms.LastDate) {
+		ms.LastDate = transaction.DateTime
+	}
+}
+
+// UpdateError actualiza las estadísticas para una transacción con error
+func (ms *MigrationStats) UpdateError(lineNumber int, err error) {
+	ms.ErrorRecords++
+	errorMsg := fmt.Sprintf("Line %d: %v", lineNumber, err)
+	ms.Errors = append(ms.Errors, errorMsg)
 }
 
 // ProcessCSV procesa un archivo CSV y migra las transacciones a la base de datos
-func (ms *MigrationService) ProcessCSV(reader io.Reader) (*MigrationResult, error) {
+func (ms *MigrationService) ProcessCSV(reader io.Reader) (*MigrationStats, error) {
+	// Capturar tiempo de inicio
+	startTime := time.Now()
+
 	csvReader := csv.NewReader(reader)
 
 	// Leer todas las líneas del CSV
@@ -50,33 +105,46 @@ func (ms *MigrationService) ProcessCSV(reader io.Reader) (*MigrationResult, erro
 		return nil, fmt.Errorf("invalid CSV header. Expected: %v, Got: %v", expectedHeader, header)
 	}
 
-	result := &MigrationResult{
-		TotalRecords: len(records) - 1, // Excluir header
-		Transactions: []models.UserTransaction{},
-	}
+	// Inicializar estadísticas en línea
+	stats := NewMigrationStats()
+	stats.TotalRecords = len(records) - 1 // Excluir header
 
-	// Procesar cada línea de datos (saltar header)
+	// Procesar cada línea de datos (saltar header) - ESTADÍSTICAS EN LÍNEA
 	for i, record := range records[1:] {
-		transaction, err := ms.parseTransaction(record, i+2) // +2 porque empezamos desde línea 2
+		lineNumber := i + 2 // +2 porque empezamos desde línea 2
+
+		// Parsear transacción
+		transaction, err := ms.parseTransaction(record, lineNumber)
 		if err != nil {
-			result.ErrorRecords++
-			fmt.Printf("Error parsing record at line %d: %v\n", i+2, err)
+			stats.UpdateError(lineNumber, err)
+			fmt.Printf("Error parsing record at line %d: %v\n", lineNumber, err)
 			continue
 		}
 
 		// Guardar en la base de datos mock
 		savedTransaction, err := ms.database.SaveTransaction(transaction)
 		if err != nil {
-			result.ErrorRecords++
-			fmt.Printf("Error saving transaction at line %d: %v\n", i+2, err)
+			stats.UpdateError(lineNumber, err)
+			fmt.Printf("Error saving transaction at line %d: %v\n", lineNumber, err)
 			continue
 		}
 
-		result.SuccessRecords++
-		result.Transactions = append(result.Transactions, savedTransaction)
+		// Actualizar estadísticas en línea (NO almacenar en memoria)
+		stats.UpdateSuccess(savedTransaction)
 	}
 
-	return result, nil
+	// Calcular tiempo de procesamiento real
+	processingTime := time.Since(startTime)
+
+	// Enviar reporte de migración (asíncrono)
+	if ms.reportService != nil {
+		go func() {
+			report := ms.generateMigrationReportFromStats(stats, "uploaded_file.csv", 0, processingTime)
+			ms.reportService.SendMigrationReport(report)
+		}()
+	}
+
+	return stats, nil
 }
 
 // validateHeader verifica que el header del CSV sea correcto
@@ -162,4 +230,44 @@ func (ms *MigrationService) GetMigrationStats() map[string]interface{} {
 	stats["user_transaction_counts"] = userStats
 
 	return stats
+}
+
+// generateMigrationReportFromStats genera un reporte basado en estadísticas en línea
+func (ms *MigrationService) generateMigrationReportFromStats(stats *MigrationStats, filename string, fileSize int64, processingTime time.Duration) *models.MigrationReport {
+	// Calcular promedio basado en transacciones exitosas
+	averageAmount := float64(0)
+	if stats.SuccessRecords > 0 {
+		averageAmount = stats.TotalAmount / float64(stats.SuccessRecords)
+	}
+
+	// Generar archivo CSV de errores si hay errores
+	var errorFileCSV string
+	if len(stats.Errors) > 0 && ms.reportService != nil {
+		if errorPath, err := ms.reportService.GenerateErrorCSV(stats.Errors, filename); err == nil {
+			errorFileCSV = errorPath
+		}
+	}
+
+	report := &models.MigrationReport{
+		Timestamp:      time.Now(),
+		Filename:       filename,
+		FileSize:       fileSize,
+		TotalRecords:   stats.TotalRecords,
+		SuccessRecords: stats.SuccessRecords,
+		ErrorRecords:   stats.ErrorRecords,
+		ProcessingTime: processingTime,
+		UsersAffected:  len(stats.UsersAffected),
+		TotalAmount:    stats.TotalAmount,
+		AverageAmount:  averageAmount,
+		LargestAmount:  stats.LargestAmount,
+		SmallestAmount: stats.SmallestAmount,
+		Errors:         stats.Errors,
+		ErrorFileCSV:   errorFileCSV,
+	}
+
+	// Configurar rango de fechas
+	report.DateRange.From = stats.FirstDate
+	report.DateRange.To = stats.LastDate
+
+	return report
 }
