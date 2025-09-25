@@ -36,7 +36,7 @@ func (h *MigrationHandler) MigrateCSV(w http.ResponseWriter, r *http.Request) {
 	// Parsear el formulario multipart
 	err := r.ParseMultipartForm(32 << 20) // 32 MB max
 	if err != nil {
-		http.Error(w, "Error parsing multipart form", http.StatusBadRequest)
+		http.Error(w, "Error parsing multipart form => "+err.Error(), http.StatusBadRequest)
 		return
 	}
 

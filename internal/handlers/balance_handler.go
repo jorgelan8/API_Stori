@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // BalanceHandler maneja las requests del endpoint de balance
@@ -36,8 +37,14 @@ func (h *BalanceHandler) GetUserBalance(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Extraer user_id de la URL
-	userIDStr := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
+	// Extraer user_id de la URL usando Gorilla Mux
+	vars := mux.Vars(r)
+	userIDStr, exists := vars["user_id"]
+	if !exists {
+		http.Error(w, "user_id parameter not found in URL", http.StatusBadRequest)
+		return
+	}
+
 	userID, err := strconv.Atoi(userIDStr)
 	if err != nil {
 		http.Error(w, "Invalid user_id format", http.StatusBadRequest)
