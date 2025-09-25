@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"api-stori/internal/config"
 	"api-stori/internal/handlers"
 	"api-stori/internal/services"
 	"net/http"
@@ -14,6 +15,13 @@ func SetupRoutes(router *mux.Router) {
 	mockDB := services.NewMockDatabase()
 	migrationService := services.NewMigrationService(mockDB)
 	usersService := services.NewUsersService(mockDB)
+
+	// Cargar configuración desde variables de entorno
+	appConfig := config.LoadConfig()
+
+	// Configurar servicio de reportes
+	reportService := services.NewReportService(appConfig.ToReportConfig())
+	migrationService.SetReportService(reportService)
 
 	// Crear handlers
 	migrationHandler := handlers.NewMigrationHandler(migrationService)
