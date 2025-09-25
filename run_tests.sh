@@ -71,12 +71,41 @@ fi
 
 print_status "Integration tests passed"
 
+# Run all tests with coverage
+echo ""
+echo "📊 Running all tests with coverage..."
+go test -v ./... -cover -coverpkg=./... -coverprofile=coverage_all.out
+if [ $? -ne 0 ]; then
+    print_error "Some tests failed"
+    exit 1
+fi
+
+# Generate coverage report
+echo ""
+echo "📈 Generating coverage report..."
+go tool cover -html=coverage_all.out -o coverage_report.html
+if [ $? -eq 0 ]; then
+    print_status "Coverage report generated: coverage_report.html"
+else
+    print_warning "Failed to generate HTML coverage report"
+fi
+
+# Show coverage summary
+echo ""
+echo "📊 Coverage Summary:"
+go tool cover -func=coverage_all.out | tail -1
+
+# Clean up coverage files
+echo ""
+echo "🧹 Cleaning up..."
+rm -f coverage_unit.out coverage_integration.out coverage_all.out
 
 print_status "All tests completed successfully!"
 echo ""
 echo "🎉 Test Summary:"
 echo "   ✅ Unit tests: PASSED"
 echo "   ✅ Integration tests: PASSED"
+echo "   ✅ Coverage report: coverage_report.html"
 echo ""
 echo "📋 To run specific tests:"
 echo "   go test -v ./internal/services/... ./internal/handlers/...  # Unit tests only"
