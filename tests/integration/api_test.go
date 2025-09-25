@@ -99,18 +99,9 @@ func TestMigrateEndpoint(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", resp.StatusCode)
 	}
 
-	var result map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		t.Fatalf("Expected no error decoding JSON, got %v", err)
-	}
-
-	if result["success"] != true {
-		t.Error("Expected success to be true")
-	}
-
-	data := result["data"].(map[string]interface{})
-	if data["total_records"] != float64(3) {
-		t.Errorf("Expected 3 total records, got %v", data["total_records"])
+	// El endpoint /migrate ahora solo devuelve código HTTP sin body
+	if resp.ContentLength != 0 {
+		t.Errorf("Expected empty body, got content length %d", resp.ContentLength)
 	}
 }
 
@@ -214,12 +205,12 @@ func TestBalanceEndpoint(t *testing.T) {
 		t.Errorf("Expected balance %.2f, got %v", expectedBalance, result["balance"])
 	}
 
-	if result["total_debits"] != float64(1) {
-		t.Errorf("Expected 1 debit, got %v", result["total_debits"])
+	if result["total_debits"] != -75.25 {
+		t.Errorf("Expected -75.25 debit, got %v", result["total_debits"])
 	}
 
-	if result["total_credits"] != float64(1) {
-		t.Errorf("Expected 1 credit, got %v", result["total_credits"])
+	if result["total_credits"] != 150.50 {
+		t.Errorf("Expected 150.50 credit, got %v", result["total_credits"])
 	}
 }
 

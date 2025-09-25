@@ -22,13 +22,6 @@ func NewBalanceHandler(usersService *services.UsersService) *BalanceHandler {
 	}
 }
 
-// BalanceResponse representa la respuesta del endpoint de balance
-type BalanceResponse struct {
-	Balance      float64 `json:"balance"`
-	TotalDebits  int     `json:"total_debits"`
-	TotalCredits int     `json:"total_credits"`
-}
-
 // GetUserBalance maneja el endpoint GET /users/{user_id}/balance
 func (h *BalanceHandler) GetUserBalance(w http.ResponseWriter, r *http.Request) {
 	// Verificar que el método sea GET
@@ -94,12 +87,8 @@ func (h *BalanceHandler) GetUserBalance(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Preparar respuesta
-	response := BalanceResponse{
-		Balance:      balanceInfo.Balance,
-		TotalDebits:  balanceInfo.TotalDebits,
-		TotalCredits: balanceInfo.TotalCredits,
-	}
+	// Preparar respuesta usando el modelo unificado
+	response := balanceInfo
 
 	// Escribir respuesta JSON
 	w.Header().Set("Content-Type", "application/json")

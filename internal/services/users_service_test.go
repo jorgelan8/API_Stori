@@ -30,16 +30,16 @@ func TestUsersService_GetUserBalance(t *testing.T) {
 	}
 
 	expectedBalance := 150.50 - 75.25 + 200.00
-	if balance.Balance != expectedBalance {
-		t.Errorf("Expected balance %.2f, got %.2f", expectedBalance, balance.Balance)
+	if float64(balance.Balance) != expectedBalance {
+		t.Errorf("Expected balance %.2f, got %.2f", expectedBalance, float64(balance.Balance))
 	}
 
-	if balance.TotalDebits != 1 {
-		t.Errorf("Expected 1 debit, got %d", balance.TotalDebits)
+	if float64(balance.TotalDebits) != -75.25 {
+		t.Errorf("Expected -75.25 debit, got %f", float64(balance.TotalDebits))
 	}
 
-	if balance.TotalCredits != 2 {
-		t.Errorf("Expected 2 credits, got %d", balance.TotalCredits)
+	if float64(balance.TotalCredits) != 350.50 {
+		t.Errorf("Expected 350.50 credits, got %f", float64(balance.TotalCredits))
 	}
 
 	// Test getting balance for non-existing user
@@ -77,15 +77,15 @@ func TestUsersService_GetUserBalanceWithDateRange(t *testing.T) {
 
 	// Should only include transactions from Jan 16-17: -75.25 + 200.00 = 124.75
 	expectedBalance := -75.25 + 200.00
-	if balance.Balance != expectedBalance {
-		t.Errorf("Expected balance %.2f, got %.2f", expectedBalance, balance.Balance)
+	if float64(balance.Balance) != expectedBalance {
+		t.Errorf("Expected balance %.2f, got %.2f", expectedBalance, float64(balance.Balance))
 	}
 
-	if balance.TotalDebits != 1 {
-		t.Errorf("Expected 1 debit, got %d", balance.TotalDebits)
+	if float64(balance.TotalDebits) != -75.25 {
+		t.Errorf("Expected -75.25 debit, got %f", float64(balance.TotalDebits))
 	}
 
-	if balance.TotalCredits != 1 {
-		t.Errorf("Expected 1 credit, got %d", balance.TotalCredits)
+	if float64(balance.TotalCredits) != 200.00 {
+		t.Errorf("Expected 200.00 credit, got %f", float64(balance.TotalCredits))
 	}
 }
