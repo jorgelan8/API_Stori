@@ -73,6 +73,7 @@ nano .env
   <summary>
   - Ejecutar el API (server) (Clicer para ver detalles)
   <Summary>
+  
 ```bash
 go run cmd/api/main.go
 ```
