@@ -223,30 +223,6 @@ func (ms *MigrationService) parseTransaction(record []string, lineNumber int) (m
 	}, nil
 }
 
-// GetMigrationStats retorna estadísticas de la migración
-func (ms *MigrationService) GetMigrationStats() map[string]interface{} {
-	allTransactions := ms.database.GetAllTransactions()
-
-	stats := map[string]interface{}{
-		"total_transactions": len(allTransactions),
-	}
-
-	// Calcular estadísticas por usuario
-	userStats := make(map[int]int)
-	totalAmount := 0.0
-
-	for _, transaction := range allTransactions {
-		userStats[transaction.UserID]++
-		totalAmount += transaction.Amount
-	}
-
-	stats["users_count"] = len(userStats)
-	stats["total_amount"] = totalAmount
-	stats["user_transaction_counts"] = userStats
-
-	return stats
-}
-
 // generateMigrationReportFromStats genera un reporte basado en estadísticas en línea
 func (ms *MigrationService) generateMigrationReportFromStats(stats *MigrationStats, filename string, fileSize int64, processingTime time.Duration) *models.MigrationReport {
 	// Calcular promedio basado en transacciones exitosas

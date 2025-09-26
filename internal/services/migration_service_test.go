@@ -4,7 +4,6 @@ import (
 	"api-stori/internal/models"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestMigrationService_ProcessCSV(t *testing.T) {
@@ -163,50 +162,5 @@ func TestMigrationService_ProcessCSVDifferentDateFormats(t *testing.T) {
 
 	if result.SuccessRecords != 3 {
 		t.Errorf("Expected 3 success records, got %d", result.SuccessRecords)
-	}
-}
-
-func TestMigrationService_GetMigrationStats(t *testing.T) {
-	db := NewMockDatabase()
-	service := NewMigrationService(db)
-	rs := service.GetReportService()
-	rs.SetForceMockMode(true)
-
-	// Add some transactions
-	transactions := []models.UserTransaction{
-		{ID: 1, UserID: 1001, Amount: 150.50, DateTime: time.Now()},
-		{ID: 2, UserID: 1001, Amount: -75.25, DateTime: time.Now()},
-		{ID: 3, UserID: 1002, Amount: 200.00, DateTime: time.Now()},
-	}
-
-	for _, tx := range transactions {
-		db.SaveTransaction(tx)
-	}
-
-	stats := service.GetMigrationStats()
-
-	// Check total transactions
-	if stats["total_transactions"] != 3 {
-		t.Errorf("Expected 3 total transactions, got %v", stats["total_transactions"])
-	}
-
-	// Check users count
-	if stats["users_count"] != 2 {
-		t.Errorf("Expected 2 users, got %v", stats["users_count"])
-	}
-
-	// Check total amount
-	expectedTotal := 150.50 - 75.25 + 200.00
-	if stats["total_amount"] != expectedTotal {
-		t.Errorf("Expected total amount %.2f, got %v", expectedTotal, stats["total_amount"])
-	}
-
-	// Check user transaction counts
-	userCounts := stats["user_transaction_counts"].(map[int]int)
-	if userCounts[1001] != 2 {
-		t.Errorf("Expected user 1001 to have 2 transactions, got %d", userCounts[1001])
-	}
-	if userCounts[1002] != 1 {
-		t.Errorf("Expected user 1002 to have 1 transaction, got %d", userCounts[1002])
 	}
 }

@@ -38,28 +38,6 @@ func (db *MockDatabase) SaveTransaction(transaction models.UserTransaction) (mod
 	return transaction, nil
 }
 
-// SaveTransactions guarda múltiples transacciones en el mock de base de datos
-func (db *MockDatabase) SaveTransactions(transactions []models.UserTransaction) ([]models.UserTransaction, error) {
-	db.mutex.Lock()
-	defer db.mutex.Unlock()
-
-	var savedTransactions []models.UserTransaction
-
-	for _, transaction := range transactions {
-		// Si no tiene ID, asignar uno nuevo
-		if transaction.ID == 0 {
-			transaction.ID = db.nextID
-			db.nextID++
-		}
-
-		// Guardar la transacción
-		db.transactions[transaction.ID] = transaction
-		savedTransactions = append(savedTransactions, transaction)
-	}
-
-	return savedTransactions, nil
-}
-
 // GetTransaction obtiene una transacción por ID
 func (db *MockDatabase) GetTransaction(id int) (models.UserTransaction, bool) {
 	db.mutex.RLock()
