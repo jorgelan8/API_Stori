@@ -4,14 +4,14 @@ Todas las versiones notables de este proyecto se documentarán en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), y este proyecto adhiere al [Versionado Semántico (SemVer)](https://semver.org/lang/es/).
 
-## [1.1.3] - 2025-09-25
+## [1.1.2] - 2025-09-25
 
 ### Añadido (Added)
 - Se agregaron **pruebas de rendimiento** con benchmarking de endpoints críticos.
 - Se implementó análisis de latencia y rendimiento para su optimización.
 - Se añadió documentación completa de pruebas de rendimiento.
 
-## [1.1.2] - 2025-09-25
+## [1.1.1] - 2025-09-25
 
 ### Añadido (Added)
 - Se implementaron **pruebas de carga** con testing de concurrencia con una variabilidad de goroutine (10-1000).
