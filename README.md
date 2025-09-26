@@ -36,34 +36,39 @@ API RESTful en Go para migración de transacciones y consulta de balance de usua
 - Go 1.21+ (Descargalo [aqui][UrlGo])
 - Docker (opcional) (Solo si se quiere probar localmente) (Descargalo [aquí][UrlDocker])
 
-### Instalación local (comandos para MacOS)
+### Instalación local (Comandos para MacOS)
+#### Abre una terminal y ejecuta los siguientes comandos
+
+- Clonar el repositorio
 ```bash
-# Abre una terminal y ejecuta los siguientes comandos
-
-# Clonar el repositorio
 git clone https://github.com/jorgelan8/API_Stori.git
+```
 
+- Instalar dependencias
+```bash
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori 
 
-# Instalar dependencias
 go mod tidy
+```
 
-# Configurar variables de entorno
+- Configurar variables de entorno
+```bash
 #   Creamos el archivo .env a partir del template env.example
 #     Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
 cp env.example .env
 
 # Editar .env con tus configuraciones, usa nano o tu editor favorito
 nano .env
-
-# Ejecutar el API (server)
-go run cmd/api/main.go
-
-# **** Ahora ya puedes hacer request a la API ****
 ```
 
-### 🧪 Testing API endpoints local (Comando para MacOS)
+- Ejecutar el API (server)
+```bash
+go run cmd/api/main.go
+```
+*** Ahora ya puedes hacer request a la API ***
+
+### 🧪 Testing API endpoints local
 El server local esta configurado para usar el puerto 8080
 ```bash
 # Abrir una terminal y ejecutar los siguientes comandos
@@ -85,7 +90,7 @@ curl -s "http://localhost:8080/api/v1/users/1001/balance"
 # Si carga un archivo diferente al de ejemplo, debe ajustar el "1001" al user_id que quiere probar
 ```
 
-### Usar el API con Docker (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker])
+### Usar el API con Docker (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker]) (Comandos para MacOS)
 ```bash
 # Abre una terminal y ejecuta los siguientes comandos
 
@@ -140,57 +145,35 @@ curl -s "http://localhost:8081/api/v1/users/1001/balance"
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori
 
-make test-unit
+go test -v ./internal/services/... ./internal/handlers/...
 ```
 - Ejecutar pruebas integrales
 ```bash
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori
 
-make test-integration   # Pruebas de integración
+go test -v ./tests/integration/...
 ```
 - Ejecutar todas las pruebas
 ```bash
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori
 
-make test-all
+# dar permiso de ejecución chmod +x run_test.sh
+./run_tests.sh
 ````
-
-## 📧 Configuración de Email
-
-```bash
-# Configurar email interactivamente
-./configure_email.sh
-
-# Probar envío de email
-./test_email_report.sh
-```
 
 ## 🔧 Variables de Entorno
 
 Ver `env.example` para todas las variables disponibles.
 
 ### Principales:
-- `PORT` - Puerto del servidor (default: 8080)
 - `APP_ENV` - Entorno (development/production)
+- `PORT` - Puerto del servidor (default: 8080)
 - `SMTP_HOST` - Servidor SMTP para reportes
 - `SMTP_USER` - Usuario SMTP
 - `SMTP_PASS` - Contraseña SMTP
 - `TO_EMAILS` - Emails destino para reportes
-
-
-## 🐳 Docker
-
-### Desarrollo
-```bash
-docker-compose -f docker-compose.dev.yml up
-```
-
-### Producción
-```bash
-docker-compose up
-```
 
 ## 📚 Documentación Adicional
 
