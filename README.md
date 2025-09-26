@@ -81,27 +81,30 @@ curl -s http://localhost:8080/api/v1/health
 ```bash
 curl -s http://localhost:8080/
 ```
-- 🧪 Probar migrate endpoint con archivo CSV
-##### Asegurate de colocar la ruta correcta del archivo a cargar, el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
+- Probar migrate endpoint con archivo CSV
 ```bash
+# Asegurate de colocar la ruta correcta del archivo a cargar
+# el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
+
 curl -X POST http://localhost:8080/api/v1/migrate -F "csv_file=@examples/sample_transactions.csv"
 
 #Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-# 🧪 Probar balance endpoint, debe haber cargado un archivo en el endpoint /migrate
+- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint /migrate
 ```bash
 curl -s "http://localhost:8080/api/v1/users/1001/balance"
 
 # Si carga un archivo diferente al de ejemplo, debe ajustar el "1001" al user_id que quiere probar
 ```
 
-### Usar el API con Docker (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker]) (Comandos para MacOS)
+### Usar el API con Docker (Comandos para MacOS)
+### (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker]) 
 
 ##### Abre una terminal y ejecuta los siguientes comandos
 - Configurar variables de entorno
-########   Editar archivo docker.env.development
-########     Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
+######   Editar archivo docker.env.development
+######     Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
 ```bash
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori
@@ -111,12 +114,12 @@ nano docker.env.development
 # El archivo traer valores por defecto, pero vencen proximamente, se recomienda sus datos
 ```
 
-# Construir y ejecutar contenedor
+- Construir y ejecutar contenedor
 ```bash
 docker-compose up
 ```
 
-# si lo prefieres O usar el script (dar permiso de ejecución chmod +x start.sh)
+- si lo prefieres O usar el script (dar permiso de ejecución chmod +x start.sh)
 ```bash
 ./start.sh
 ```
@@ -136,15 +139,17 @@ curl -s http://localhost:8081/api/v1/health
 curl -s http://localhost:8081/
 ```
 
-- 🧪 Probar migrate endpoint con archivo CSV
-##### Asegurate de colocar la ruta correcta del archivo a cargar, el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
+- Probar migrate endpoint con archivo CSV
 ```bash
+# Asegurate de colocar la ruta correcta del archivo a cargar
+# el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
+
 curl -X POST http://localhost:8081/api/v1/migrate -F "csv_file=@examples/sample_transactions.csv"
 
 #Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-# 🧪 Probar balance endpoint, debe haber cargado un archivo en el endpoint /migrate
+- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint /migrate
 ```bash
 curl -s "http://localhost:8081/api/v1/users/1001/balance"
 
@@ -177,7 +182,7 @@ cd API_Stori
 
 # dar permiso de ejecución chmod +x run_test.sh
 ./run_tests.sh
-````
+```
 
 ## 🔧 Variables de Entorno
 
