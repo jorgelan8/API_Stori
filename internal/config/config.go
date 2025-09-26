@@ -5,14 +5,35 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 // LoadConfig carga la configuración desde variables de entorno
 func LoadConfig() *Config {
+	// Cargar variables de entorno desde .env usando godotenv
+	loadEnvFile()
+
 	return &Config{
 		App:    loadAppConfig(),
 		Email:  loadEmailConfig(),
 		Report: loadReportConfig(),
+	}
+}
+
+// loadEnvFile carga el archivo .env con comportamiento configurable
+func loadEnvFile() {
+	// Verificar si estamos en modo desarrollo
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "development" // Default a development
+	}
+
+	// En desarrollo usar Overload, en producción usar Load
+	if env == "development" {
+		godotenv.Overload() // Sobrescribe variables existentes
+	} else {
+		godotenv.Load() // Solo carga si no existen
 	}
 }
 
@@ -25,8 +46,9 @@ type Config struct {
 
 // AppConfig configuración de la aplicación
 type AppConfig struct {
-	Port string
-	Host string
+	Port        string
+	Host        string
+	Environment string
 }
 
 // EmailConfig configuración de email
@@ -48,38 +70,39 @@ type ReportConfig struct {
 // loadAppConfig carga la configuración de la aplicación
 func loadAppConfig() AppConfig {
 	return AppConfig{
-		Port: getEnv("PORT", "8080"),
-		Host: getEnv("HOST", "localhost"),
+		Port:        getEnvOrDefault("PORT", "8080"),
+		Host:        getEnvOrDefault("HOST", "localhost"),
+		Environment: getEnvOrDefault("APP_ENV", "production"),
 	}
 }
 
 // loadEmailConfig carga la configuración de email
 func loadEmailConfig() EmailConfig {
-	port, _ := strconv.Atoi(getEnv("SMTP_PORT", "587"))
+	port, _ := strconv.Atoi(getEnvOrDefault("SMTP_PORT", "587"))
 
 	return EmailConfig{
-		SMTPHost:  getEnv("SMTP_HOST", "smtp.gmail.com"),
+		SMTPHost:  getEnvOrDefault("SMTP_HOST", "smtp.gmail.com"),
 		SMTPPort:  port,
-		Username:  getEnv("SMTP_USERNAME", ""),
-		Password:  getEnv("SMTP_PASSWORD", ""),
-		FromEmail: getEnv("FROM_EMAIL", ""),
-		ToEmails:  parseEmailList(getEnv("TO_EMAILS", "admin@api-stori.com")),
+		Username:  os.Getenv("SMTP_USERNAME"),
+		Password:  os.Getenv("SMTP_PASSWORD"),
+		FromEmail: os.Getenv("FROM_EMAIL"),
+		ToEmails:  parseEmailList(getEnvOrDefault("TO_EMAILS", "admin@api-stori.com")),
 	}
 }
 
 // loadReportConfig carga la configuración de reportes
 func loadReportConfig() ReportConfig {
-	channelsStr := getEnv("REPORT_CHANNELS", "email,log")
+	channelsStr := getEnvOrDefault("REPORT_CHANNELS", "email,log")
 	channels := parseReportChannels(channelsStr)
 
 	return ReportConfig{
 		Channels: channels,
-		Subject:  getEnv("REPORT_SUBJECT", "Migration Report - API Stori"),
+		Subject:  getEnvOrDefault("REPORT_SUBJECT", "Migration Report - API Stori"),
 	}
 }
 
-// getEnv obtiene una variable de entorno con valor por defecto
-func getEnv(key, defaultValue string) string {
+// getEnvOrDefault obtiene una variable de entorno con valor por defecto (usando godotenv)
+func getEnvOrDefault(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
