@@ -198,9 +198,17 @@ Ver `env.example` para todas las variables disponibles.
 
 ## 📚 Documentación Adicional
 
-- [Documentación de Pruebas](tests/README.md)
 - [Documentación de Endpoints](api/docs/)
-- [Documentación Técnica](docs/)
+
+
+## 🎯 Próximos Pasos
+
+1. **Pruebas de Stress**: Swagger/OpenAPI para documentación interactiva
+2. **Pruebas de Performance**: Swagger/OpenAPI para documentación interactiva
+3. **CI/CD**: Integración continua con pruebas automáticas
+4. **Monitoreo**: Mejorar de logging, monitoreo y control de errores
+6. **Reportes de comportamiento de usuarios**: Promedio de saldo al mes, identificacion de temporada baja
+5. **Soportar conexiones fuera del dominio**: Middleware para CORS
 
 ## 🤝 Contribución
 
