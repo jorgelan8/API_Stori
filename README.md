@@ -41,8 +41,9 @@ API RESTful en Go para migración de transacciones y consulta de balance de usua
 
 ### Instalación local (Comandos para MacOS)
 <details>
-  <summary> Clic to details </summary>
-#### Abre una terminal y ejecuta los siguientes comandos
+  <summary>
+    Abre una terminal y ejecuta los siguientes comandos (Clic para ver detalles)
+  </summary>
 
 - Clonar el repositorio
 ```bash
@@ -68,11 +69,15 @@ nano .env
 ```
 </details>
 
-- Ejecutar el API (server)
+<details>
+  <summary>
+  - Ejecutar el API (server) (Clicer para ver detalles)
+  <Summary>
 ```bash
 go run cmd/api/main.go
 ```
 *** Ahora ya puedes hacer request a la API ***
+</details>
 
 ### 🧪 Testing API endpoints local
 #### El server local esta configurado para usar el puerto 8080
