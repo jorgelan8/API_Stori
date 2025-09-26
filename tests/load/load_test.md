@@ -29,21 +29,23 @@ Las pruebas de carga evalúan el comportamiento de la API bajo diferentes nivele
 ## 🧪 Tests Incluidos
 
 ### **Load Tests**
-- **Concurrencia**: 10, 50, 100 usuarios simultáneos
-- **Duración**: Tests de 30 segundos a 2 minutos
-- **Endpoints**: `/migrate`, `/balance`, `/health`
+- **Concurrencia**: 10-15 goroutines simultáneas
+- **Requests por goroutine**: 25-250 requests
+- **Total requests**: 250-3,750 requests por test
+- **Endpoints**: `/migrate`, `/balance` (con y sin date range)
 
-### **Stress Tests**
-- **Límites máximos**: Hasta 500 usuarios concurrentes
-- **Recovery testing**: Comportamiento post-sobrecarga
-- **Resource monitoring**: CPU, memoria, conexiones
+### **Concurrency Tests**
+- **Migration load**: 10 goroutines × 25 requests = 250 total
+- **Balance load**: 10 goroutines × 250 requests = 2,500 total  
+- **Balance with date range**: 15 goroutines × 250 requests = 3,750 total
 
 ## 📊 Métricas Clave
 
-- **Response Time**: Latencia promedio y percentiles (P95, P99)
-- **Throughput**: Requests por segundo (RPS)
-- **Error Rate**: Porcentaje de requests fallidos
-- **Resource Usage**: CPU, memoria, conexiones de red
+- **Duration**: Tiempo total de ejecución del test
+- **Throughput**: Requests por segundo (RPS) calculado
+- **Success Count**: Número de requests exitosos
+- **Error Count**: Número de requests fallidos (debe ser 0)
+- **Timeout**: 30 segundos máximo por test
 
 ## 🚀 Ejecución
 
@@ -61,26 +63,28 @@ go test -v ./tests/load/... -timeout 10m
 ## 📈 Interpretación de Resultados
 
 ### **✅ Éxito**
-- Response time < 2 segundos
-- Error rate < 1%
-- Throughput estable
-- Recursos dentro de límites
+- Error count = 0 (todos los requests exitosos)
+- Test completa en < 30 segundos
+- Throughput > 10 RPS
+- Sin timeouts
 
 ### **⚠️ Advertencia**
-- Response time 2-5 segundos
-- Error rate 1-5%
-- Throughput variable
-- Recursos altos pero manejables
+- Error count < 5% del total
+- Test completa en < 30 segundos
+- Throughput > 5 RPS
+- Algunos timeouts ocasionales
 
 ### **❌ Falla**
-- Response time > 5 segundos
-- Error rate > 5%
-- Throughput degradado
-- Recursos agotados
+- Error count > 5% del total
+- Test timeout después de 30 segundos
+- Throughput < 5 RPS
+- Muchos timeouts
 
-### **Personalización**
-- Ajustar `concurrency` según infraestructura
-- Modificar `duration` según necesidades
+### **Configuración del Código**
+- **Migration test**: `concurrency = 10`, `requestsPerGoroutine = 25`
+- **Balance test**: `concurrency = 10`, `requestsPerGoroutine = 250`
+- **Balance with date range**: `concurrency = 15`, `requestsPerGoroutine = 250`
+- **Timeout**: 30 segundos máximo por test
 
 ## 📋 Mejores Prácticas
 

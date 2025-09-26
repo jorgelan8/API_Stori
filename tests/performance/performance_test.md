@@ -29,8 +29,8 @@ Las pruebas de rendimiento miden la velocidad, estabilidad y eficiencia de la AP
 ## 🧪 Tests Incluidos
 
 ### **Response Time Tests**
-- **Latencia promedio** por endpoint
-- **Percentiles** (P50, P90, P95, P99)
+- **Duración total** de operaciones
+- **Throughput** (Records/sec, Requests/sec)
 - **Timeouts** y límites de espera
 
 ### **Throughput Tests**
@@ -44,17 +44,17 @@ Las pruebas de rendimiento miden la velocidad, estabilidad y eficiencia de la AP
 - **Network I/O** efficiency
 
 ### **Stability Tests**
-- **Long-running** performance
-- **Memory leaks** detection
-- **Resource cleanup** validation
+- **Concurrent requests** handling
+- **Memory usage** with large datasets
+- **Error handling** under load
 
 ## 📊 Métricas Clave
 
-- **Response Time**: < 200ms (P95), < 500ms (P99)
-- **Throughput**: > 1000 RPS sostenido
-- **CPU Usage**: < 70% promedio
-- **Memory**: < 512MB heap
-- **Error Rate**: < 0.1%
+- **Duration**: < 2 segundos para 1000 records
+- **Throughput**: > 500 Records/sec, > 50 Requests/sec
+- **Concurrency**: Manejo de 50+ requests simultáneos
+- **Memory**: Procesamiento de 10,000+ records sin leaks
+- **Error Rate**: 0% en condiciones normales
 
 ## 🚀 Ejecución
 
@@ -72,32 +72,32 @@ go test -v ./tests/performance/... -timeout 30m
 ## 📈 Interpretación de Resultados
 
 ### **✅ Excelente**
-- Response time < 100ms
-- Throughput > 2000 RPS
-- CPU < 50%
-- Memory estable
+- Duration < 1 segundo para 1000 records
+- Throughput > 1000 Records/sec
+- Concurrency > 50 requests simultáneos
+- Memory estable con 10,000+ records
 - Error rate = 0%
 
 ### **✅ Bueno**
-- Response time < 200ms
-- Throughput > 1000 RPS
-- CPU < 70%
-- Memory < 512MB
-- Error rate < 0.1%
-
-### **⚠️ Aceptable**
-- Response time < 500ms
-- Throughput > 500 RPS
-- CPU < 85%
-- Memory < 1GB
+- Duration < 2 segundos para 1000 records
+- Throughput > 500 Records/sec
+- Concurrency > 20 requests simultáneos
+- Memory < 1GB con datasets grandes
 - Error rate < 1%
 
+### **⚠️ Aceptable**
+- Duration < 5 segundos para 1000 records
+- Throughput > 200 Records/sec
+- Concurrency > 10 requests simultáneos
+- Memory < 2GB con datasets grandes
+- Error rate < 5%
+
 ### **❌ Necesita Mejora**
-- Response time > 500ms
-- Throughput < 500 RPS
-- CPU > 85%
-- Memory > 1GB
-- Error rate > 1%
+- Duration > 5 segundos para 1000 records
+- Throughput < 200 Records/sec
+- Concurrency < 10 requests simultáneos
+- Memory > 2GB con datasets grandes
+- Error rate > 5%
 
 ### **Profiling Options**
 ```bash
