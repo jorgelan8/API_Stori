@@ -219,10 +219,10 @@ Ver `env.example` para todas las variables disponibles.
 
 ## 📚 Documentación Adicional
 
-- [Documentación Endpoint /migrate](api/docs/migration_endpoints.md)
-- [Documentación Endpoint /users/{user_id}/balance](api/docs/balance_endpoints.md)
-- [Documentación pruebas de stress](tests/load/load_test.md)
-- [Documentacion pruebas de performance](tests/performance/performance_test.md)
+- [Documentación Endpoint /migrate][EPmigrate]
+- [Documentación Endpoint /users/{user_id}/balance][EPBalance]
+- [Documentación pruebas de stress][LoadTest]
+- [Documentacion pruebas de performance][PerfTest]
 
 
 ## 🎯 Próximos Pasos
@@ -250,6 +250,10 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 [UrlGo]:https://go.dev/doc/install "Golang"
 [UrlDocker]:https://www.docker.com/products/docker-desktop/ "Docker"
+[EPmigrate]:api/docs/migration_endpoints.md "Endpoint /migrate"
+[EPBalance]:(api/docs/balance_endpoints.md) "Endpoint users/{user_id}/balance"
+[LoadTest]:tests/load/load_test.md "Load Test"
+[PerfTest]:(tests/performance/performance_test.md) "Performance Test"
 
 
 
