@@ -8,9 +8,8 @@ import (
 )
 
 // SetupTestServer creates a test server for all tests
-// This is a centralized function to avoid code duplication
 func SetupTestServer() *httptest.Server {
 	router := mux.NewRouter()
-	routes.SetupRoutes(router)
+	routes.SetupRoutesConfigDetail(router, false)
 	return httptest.NewServer(router)
 }

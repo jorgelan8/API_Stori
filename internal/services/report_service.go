@@ -14,13 +14,28 @@ import (
 
 // ReportService maneja el envío de reportes de migración
 type ReportService struct {
-	config *models.ReportConfig
+	config        *models.ReportConfig
+	forceMockMode bool // Control granular para forzar modo mock
+}
+
+// SetReportService establece el servicio de reportes
+func (rs *ReportService) SetForceMockMode(forceMockMode bool) {
+	rs.forceMockMode = forceMockMode
 }
 
 // NewReportService crea una nueva instancia de ReportService
 func NewReportService(config *models.ReportConfig) *ReportService {
 	return &ReportService{
-		config: config,
+		config:        config,
+		forceMockMode: false, // Por defecto permite email real
+	}
+}
+
+// NewReportServiceWithMockMode crea una nueva instancia de ReportService con modo mock forzado
+func NewReportServiceWithMockMode(config *models.ReportConfig) *ReportService {
+	return &ReportService{
+		config:        config,
+		forceMockMode: true, // Fuerza modo mock
 	}
 }
 
@@ -40,14 +55,14 @@ func (rs *ReportService) SendMigrationReport(report *models.MigrationReport) {
 
 // sendEmailReport envía el reporte por email
 func (rs *ReportService) sendEmailReport(report *models.MigrationReport) {
-	// Si no hay configuración de SMTP, usar mock
-	if rs.config.Email.SMTPHost == "" {
+	// Si está forzado el modo mock O no hay configuración de SMTP, usar mock
+	if rs.forceMockMode || rs.config.Email.SMTPHost == "" {
 		rs.sendMockEmailReport(report)
 		return
 	}
 
 	// Generar contenido del email
-	subject := fmt.Sprintf("Migration Report - %s", report.Filename)
+	subject := fmt.Sprintf("%s - %s", rs.config.Email.Subject, report.Filename)
 	body := rs.generateEmailBody(report)
 
 	// Configurar autenticación SMTP

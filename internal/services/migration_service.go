@@ -17,14 +17,29 @@ type MigrationService struct {
 
 // NewMigrationService crea una nueva instancia de MigrationService
 func NewMigrationService(database *MockDatabase) *MigrationService {
+	// Crear ReportService por defecto (solo logs, modo mock)
+	defaultConfig := &models.ReportConfig{
+		Channels: []models.ReportChannel{models.LogChannel},
+		Email: models.EmailConfig{
+			SMTPHost: "", // Sin SMTP = modo mock por defecto
+		},
+	}
+	defaultReportService := NewReportServiceWithMockMode(defaultConfig)
+
 	return &MigrationService{
-		database: database,
+		database:      database,
+		reportService: defaultReportService,
 	}
 }
 
 // SetReportService establece el servicio de reportes
 func (ms *MigrationService) SetReportService(reportService *ReportService) {
 	ms.reportService = reportService
+}
+
+// GetReportService devuelve el servicio de reportes
+func (ms *MigrationService) GetReportService() *ReportService {
+	return ms.reportService
 }
 
 // MigrationStats representa las estadísticas de migración (usado tanto para procesamiento como respuesta)

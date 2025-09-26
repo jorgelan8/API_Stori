@@ -10,6 +10,8 @@ import (
 func TestMigrationService_ProcessCSV(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Test CSV content
 	csvContent := `id,user_id,amount,datetime
@@ -70,6 +72,8 @@ func TestMigrationService_ProcessCSV(t *testing.T) {
 func TestMigrationService_ProcessCSVWithErrors(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Test CSV with invalid data
 	csvContent := `id,user_id,amount,datetime
@@ -108,6 +112,8 @@ func TestMigrationService_ProcessCSVWithErrors(t *testing.T) {
 func TestMigrationService_ProcessCSVEmptyFile(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Test empty CSV
 	csvContent := ``
@@ -122,6 +128,8 @@ func TestMigrationService_ProcessCSVEmptyFile(t *testing.T) {
 func TestMigrationService_ProcessCSVInvalidHeader(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Test CSV with wrong header
 	csvContent := `wrong,header,format
@@ -137,6 +145,8 @@ func TestMigrationService_ProcessCSVInvalidHeader(t *testing.T) {
 func TestMigrationService_ProcessCSVDifferentDateFormats(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Test CSV with different date formats
 	csvContent := `id,user_id,amount,datetime
@@ -159,6 +169,8 @@ func TestMigrationService_ProcessCSVDifferentDateFormats(t *testing.T) {
 func TestMigrationService_GetMigrationStats(t *testing.T) {
 	db := NewMockDatabase()
 	service := NewMigrationService(db)
+	rs := service.GetReportService()
+	rs.SetForceMockMode(true)
 
 	// Add some transactions
 	transactions := []models.UserTransaction{
@@ -198,6 +210,3 @@ func TestMigrationService_GetMigrationStats(t *testing.T) {
 		t.Errorf("Expected user 1002 to have 1 transaction, got %d", userCounts[1002])
 	}
 }
-
-// Note: parseTransaction and validateHeader are private methods
-// These tests are covered indirectly through ProcessCSV tests

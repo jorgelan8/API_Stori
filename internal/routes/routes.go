@@ -9,8 +9,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// SetupRoutes configura todas las rutas de la API
 func SetupRoutes(router *mux.Router) {
+	SetupRoutesConfigDetail(router, true)
+}
+
+// SetupRoutes configura todas las rutas de la API
+func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 	// Crear instancias de servicios
 	mockDB := services.NewMockDatabase()
 	migrationService := services.NewMigrationService(mockDB)
@@ -21,6 +25,9 @@ func SetupRoutes(router *mux.Router) {
 
 	// Configurar servicio de reportes
 	reportService := services.NewReportService(appConfig.ToReportConfig())
+	if !allowSendEmail {
+		reportService.SetForceMockMode(true)
+	}
 	migrationService.SetReportService(reportService)
 
 	// Crear handlers
