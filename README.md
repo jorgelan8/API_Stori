@@ -78,7 +78,6 @@ nano .env
 ```bash
 go run cmd/api/main.go
 ```
-*** Ahora ya puedes hacer request a la API ***
 
 </details>
 
