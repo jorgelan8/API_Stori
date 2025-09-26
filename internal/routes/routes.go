@@ -50,6 +50,13 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 		w.Write([]byte(`{"status": "healthy", "service": "api-stori"}`))
 	}).Methods("GET")
 
+	// Handler específico para métodos no permitidos en /health
+	api.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte(`{"error": "Method not allowed", "status": 405}`))
+	}).Methods("POST", "PUT", "DELETE", "PATCH")
+
 	// Swagger documentation routes
 	api.HandleFunc("/swagger.yaml", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/x-yaml")
@@ -61,7 +68,7 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 		http.ServeFile(w, r, "api/swagger.json")
 	}).Methods("GET")
 
-	// Swagger UI endpoint (redirects to swagger.yaml)
+	// Swagger UI endpoint
 	api.HandleFunc("/docs", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
@@ -90,6 +97,13 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 		`))
 	}).Methods("GET")
 
+	// Configurar MethodNotAllowedHandler para el subrouter
+	// api.MethodNotAllowedHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	w.WriteHeader(http.StatusMethodNotAllowed)
+	// 	w.Write([]byte(`{"error": "Method not allowed", "status": 405}`))
+	// })
+
 	// Root endpoint
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -100,7 +114,7 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 			"endpoints": {
 				"migrate": "POST /api/v1/migrate",
 				"balance": "GET /api/v1/users/{user_id}/balance",
-				"health": "GET /api/v1/health",
+				"health": "GET /api/v1/health"
 			},
 			"documentation": {
 				"swagger_ui": "/api/v1/docs",
