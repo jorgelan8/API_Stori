@@ -18,7 +18,7 @@ func TestPerformanceMigration(t *testing.T) {
 	defer server.Close()
 
 	// Test with different CSV sizes
-	sizes := []int{10, 100, 1000, 5000}
+	sizes := []int{12, 100, 1000, 5000}
 
 	for _, size := range sizes {
 		t.Run(fmt.Sprintf("CSV_Size_%d", size), func(t *testing.T) {

@@ -186,7 +186,7 @@ cd API_Stori
 
 ## Testing sofisticados
 
-- ⚡ Tests de Carga(rendimiento bajo stress) (`./tests/load/`)
+- ⚡ Tests de Carga(rendimiento bajo stress)
 
 - **`load_test.go`** - Tests de carga con múltiples requests concurrentes ([Ver Doc][LoadTest])
 
@@ -196,7 +196,7 @@ cd API_Stori
 go test -v ./tests/load/...
 ```
 
-- 📊 Tests de Rendimiento (`performance/`)
+- 📊 Tests de Rendimiento
 
 - **`performance_test.go`** - Tests de rendimiento y benchmarks ([Ver Doc][PerfTest])
 
