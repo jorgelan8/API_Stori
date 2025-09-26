@@ -99,7 +99,7 @@ curl -s "http://localhost:8080/api/v1/users/1001/balance"
 ```
 
 ### Usar el API con Docker (Comandos para MacOS)
-### (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker]) 
+#### (requiere estar instalado Docker) (Descargalo [aquí][UrlDocker]) 
 
 ##### Abre una terminal y ejecuta los siguientes comandos
 - Configurar variables de entorno
@@ -123,7 +123,7 @@ docker-compose up
 ```bash
 ./start.sh
 ```
-** Listo el ya puedes hacer request hacia el API en el Contenedor **
+*** Listo el ya puedes hacer request hacia el API en el Contenedor ***
 
 
 ### 🧪 Testing API endpoints en Docker
