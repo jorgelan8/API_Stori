@@ -81,7 +81,7 @@ curl -s http://localhost:8080/api/v1/health
 ```bash
 curl -s http://localhost:8080/
 ```
-- Probar migrate endpoint con archivo CSV
+- Probar migrate endpoint con archivo CSV ([Ver Doc][EPmigrate])
 ```bash
 # Asegurate de colocar la ruta correcta del archivo a cargar
 # el repositoro del API contiene un archivo de ejemplo para el exito de estas pruebas
@@ -91,7 +91,7 @@ curl -X POST http://localhost:8080/api/v1/migrate -F "csv_file=@examples/sample_
 # Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-- Probar balance endpoint (primero debió haber cargado un archivo en el endpoint migrate)
+- Probar balance endpoint ([Ver Doc][EPBalance]), primero debió haber cargado un archivo en el endpoint migrate
 ```bash
 curl -s "http://localhost:8080/api/v1/users/1001/balance"
 
@@ -139,7 +139,7 @@ curl -s http://localhost:8081/api/v1/health
 curl -s http://localhost:8081/
 ```
 
-- Probar migrate endpoint con archivo CSV
+- Probar migrate endpoint con archivo CSV ([Ver Doc][EPmigrate])
 ```bash
 # Asegurate de colocar la ruta correcta del archivo a cargar
 # el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
@@ -149,7 +149,7 @@ curl -X POST http://localhost:8081/api/v1/migrate -F "csv_file=@examples/sample_
 #Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint migrate
+- Probar balance endpoint ([Ver Doc][EPBalance]), primero debió haber cargado un archivo en el endpoint migrate
 ```bash
 curl -s "http://localhost:8081/api/v1/users/1001/balance"
 
@@ -188,7 +188,8 @@ cd API_Stori
 
 - ⚡ Tests de Carga(rendimiento bajo stress) (`./tests/load/`)
 
-- **`load_test.go`** - Tests de carga con múltiples requests concurrentes 10 hilos con 25 request
+- **`load_test.go`** - Tests de carga con múltiples requests concurrentes ([Ver Doc][LoadTest])
+
 
 ### Ejecutar tests de carga:
 ```bash
@@ -197,13 +198,12 @@ go test -v ./tests/load/...
 
 - 📊 Tests de Rendimiento (`performance/`)
 
-- **`performance_test.go`** - Tests de rendimiento y benchmarks
+- **`performance_test.go`** - Tests de rendimiento y benchmarks ([Ver Doc][PerfTest])
 
 ### Ejecutar tests de rendimiento:
 ```bash
 go test -v ./tests/performance/...
 ```
-
 
 ## 🔧 Variables de Entorno
 
@@ -251,9 +251,9 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 [UrlGo]:https://go.dev/doc/install "Golang"
 [UrlDocker]:https://www.docker.com/products/docker-desktop/ "Docker"
 [EPmigrate]:api/docs/migration_endpoints.md "Endpoint /migrate"
-[EPBalance]:(api/docs/balance_endpoints.md) "Endpoint users/{user_id}/balance"
+[EPBalance]:api/docs/balance_endpoints.md "Endpoint users/{user_id}/balance"
 [LoadTest]:tests/load/load_test.md "Load Test"
-[PerfTest]:(tests/performance/performance_test.md) "Performance Test"
+[PerfTest]:tests/performance/performance_test.md "Performance Test"
 
 
 
