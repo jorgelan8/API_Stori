@@ -196,19 +196,21 @@ Ver `env.example` para todas las variables disponibles.
 - `SMTP_PASS` - Contraseña SMTP
 - `TO_EMAILS` - Emails destino para reportes
 
-## 📚 Documentación Adicional
+## 📚 Documentación Endpoints
 
-- [Documentación de Endpoints](api/docs/)
+- [Documentación Endpoint /migrate](api/docs/migration_endpoints.md)
+- [Documentación Endpoint /users/{user_id}/balance](api/docs/balance_endpoints.md)
 
 
 ## 🎯 Próximos Pasos
 
 1. **Pruebas de Stress**: Swagger/OpenAPI para documentación interactiva
 2. **Pruebas de Performance**: Swagger/OpenAPI para documentación interactiva
-3. **CI/CD**: Integración continua con pruebas automáticas
-4. **Monitoreo**: Mejorar de logging, monitoreo y control de errores
+3. **Base de datos**: Guardado permanente de las transacciones
+4. **CI/CD**: Integración continua con pruebas automáticas
+5. **Monitoreo**: Mejorar de logging, monitoreo y control de errores
 6. **Reportes de comportamiento de usuarios**: Promedio de saldo al mes, identificacion de temporada baja
-5. **Soportar conexiones fuera del dominio**: Middleware para CORS
+7. **Soportar conexiones fuera del dominio**: Middleware para CORS
 
 ## 🤝 Contribución
 

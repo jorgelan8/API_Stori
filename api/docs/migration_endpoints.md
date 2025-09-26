@@ -19,7 +19,7 @@ curl -X POST http://localhost:8080/api/v1/migrate \
 ```
 
 **Response**:
-```json
+```
 200 OK
 ```
 
