@@ -54,8 +54,8 @@ go mod tidy
 
 - Configurar variables de entorno
 ```bash
-#   Creamos el archivo .env a partir del template env.example
-#     Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
+# Debe crearse el archivo .env a partir del template env.example
+#   Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
 cp env.example .env
 
 # Editar .env con tus configuraciones, usa nano o tu editor favorito
@@ -69,7 +69,7 @@ go run cmd/api/main.go
 *** Ahora ya puedes hacer request a la API ***
 
 ### 🧪 Testing API endpoints local
-El server local esta configurado para usar el puerto 8080
+#### El server local esta configurado para usar el puerto 8080
 ##### Abrir una terminal y ejecutar los siguientes comandos
 
 - Probar health endpoint
@@ -84,18 +84,18 @@ curl -s http://localhost:8080/
 - Probar migrate endpoint con archivo CSV
 ```bash
 # Asegurate de colocar la ruta correcta del archivo a cargar
-# el repositoro del API contiene un arhivo de ejemplo para el exito de estas pruebas
+# el repositoro del API contiene un archivo de ejemplo para el exito de estas pruebas
 
 curl -X POST http://localhost:8080/api/v1/migrate -F "csv_file=@examples/sample_transactions.csv"
 
-#Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
+# Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint /migrate
+- Probar balance endpoint (primero debió haber cargado un archivo en el endpoint migrate)
 ```bash
 curl -s "http://localhost:8080/api/v1/users/1001/balance"
 
-# Si carga un archivo diferente al de ejemplo, debe ajustar el "1001" al user_id que quiere probar
+# Si carga un archivo diferente al del ejemplo, debe ajustar el "1001" al user_id que quiere probar
 ```
 
 ### Usar el API con Docker (Comandos para MacOS)
@@ -103,15 +103,15 @@ curl -s "http://localhost:8080/api/v1/users/1001/balance"
 
 ##### Abre una terminal y ejecuta los siguientes comandos
 - Configurar variables de entorno
-######   Editar archivo docker.env.development
-######     Indispensable si se quiere comprobar que se envia el email con el Summary Report en el endpoint /migrate
+  - Editar el archivo docker.env.development, con sus datos
+  - Indispensable para comprobar el envío de email con el Summary Report en el endpoint migrate
 ```bash
 # Cambiar al directorio del repositorio clonado por default el directorio es API_Stori
 cd API_Stori
 
 nano docker.env.development
 
-# El archivo traer valores por defecto, pero vencen proximamente, se recomienda sus datos
+# El archivo traer valores por defecto, pero vencen proximamente
 ```
 
 - Construir y ejecutar contenedor
@@ -119,7 +119,7 @@ nano docker.env.development
 docker-compose up
 ```
 
-- si lo prefieres O usar el script (dar permiso de ejecución chmod +x start.sh)
+- si lo prefiere puede usar este script (dar permiso de ejecución chmod +x start.sh)
 ```bash
 ./start.sh
 ```
@@ -149,7 +149,7 @@ curl -X POST http://localhost:8081/api/v1/migrate -F "csv_file=@examples/sample_
 #Puede crear un nuevo archivo, debe asegurarse que el formato del archivo sea el correcto
 ```
 
-- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint /migrate
+- Probar balance endpoint, primero debió haber cargado un archivo en el endpoint migrate
 ```bash
 curl -s "http://localhost:8081/api/v1/users/1001/balance"
 
