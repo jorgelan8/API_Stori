@@ -220,8 +220,18 @@ Ver `env.example` para todas las variables disponibles.
 - `SMTP_PASS` - Contraseña SMTP
 - `TO_EMAILS` - Emails destino para reportes
 
-## 📚 Documentación Adicional
+## 📚 Documentación Técnica
 
+### 🏗️ Arquitectura y Diseño
+- [Arquitectura del Sistema](docs/architecture/) - Diseño y componentes del sistema
+- [Planes de Desarrollo](docs/plans/) - Roadmaps y estrategias
+- [Mejoras Implementadas](docs/improvements/) - Mejoras y optimizaciones
+
+### 🚀 Operaciones
+- [Guía de Despliegue](docs/deployment/) - Docker, entornos y configuración
+- [Solución de Problemas](docs/troubleshooting/) - Debugging y troubleshooting
+
+### 📋 API Endpoints
 - [Documentación Endpoint /migrate][EPmigrate]
 - [Documentación Endpoint /users/{user_id}/balance][EPBalance]
 - [Documentación pruebas de stress][LoadTest]
