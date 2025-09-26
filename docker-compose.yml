@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   jps-api-stori:
-    build: .
+    build: 
+      context: .
+      args:
+        ENV_FILE: docker.env.development
     container_name: jps-api-stori
     ports:
       - "8081:8080"

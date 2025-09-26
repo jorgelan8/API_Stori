@@ -37,6 +37,10 @@ COPY --from=builder /app/main .
 # Copy example CSV file
 COPY --from=builder /app/examples ./examples
 
+# Prepare environment variables 
+ARG ENV_FILE=env.dev
+COPY --from=builder /app/${ENV_FILE} ./.env
+
 # Change ownership to non-root user
 RUN chown -R appuser:appuser /app
 
