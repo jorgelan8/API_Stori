@@ -50,6 +50,46 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 		w.Write([]byte(`{"status": "healthy", "service": "api-stori"}`))
 	}).Methods("GET")
 
+	// Swagger documentation routes
+	api.HandleFunc("/swagger.yaml", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/x-yaml")
+		http.ServeFile(w, r, "api/swagger.yaml")
+	}).Methods("GET")
+
+	api.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		http.ServeFile(w, r, "api/swagger.json")
+	}).Methods("GET")
+
+	// Swagger UI endpoint (redirects to swagger.yaml)
+	api.HandleFunc("/docs", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Stori - Swagger Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+</head>
+<body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+    <script>
+        SwaggerUIBundle({
+            url: '/api/v1/swagger.yaml',
+            dom_id: '#swagger-ui',
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.presets.standalone
+            ]
+        });
+    </script>
+</body>
+</html>
+		`))
+	}).Methods("GET")
+
 	// Root endpoint
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -60,7 +100,12 @@ func SetupRoutesConfigDetail(router *mux.Router, allowSendEmail bool) {
 			"endpoints": {
 				"migrate": "POST /api/v1/migrate",
 				"balance": "GET /api/v1/users/{user_id}/balance",
-				"health": "GET /api/v1/health"
+				"health": "GET /api/v1/health",
+			},
+			"documentation": {
+				"swagger_ui": "/api/v1/docs",
+				"openapi_yaml": "/api/v1/swagger.yaml",
+				"openapi_json": "/api/v1/swagger.json"
 			}
 		}`))
 	}).Methods("GET")

@@ -1,0 +1,245 @@
+openapi: 3.0.3
+info:
+  title: API Stori
+  description: API RESTful para gestión de transacciones y balances de usuarios
+  version: 1.0.0
+  contact:
+    name: API Stori Support
+    email: support@api-stori.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desarrollo local
+  - url: http://localhost:8081
+    description: Servidor Docker
+
+paths:
+  /:
+    get:
+      summary: Información de la API
+      description: Endpoint raíz que proporciona información básica sobre la API
+      operationId: getRoot
+      responses:
+        '200':
+          description: Información de la API
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "API Stori"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  status:
+                    type: string
+                    example: "running"
+                  endpoints:
+                    type: array
+                    items:
+                      type: string
+                    example: ["/api/v1/migrate", "/api/v1/users/{user_id}/balance", "/api/v1/health"]
+
+  /api/v1/health:
+    get:
+      summary: Health Check
+      description: Verifica el estado de salud de la API
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API funcionando correctamente
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "OK"
+
+  /api/v1/migrate:
+    post:
+      summary: Migrar archivo CSV
+      description: Procesa un archivo CSV con transacciones y las migra a la base de datos
+      operationId: migrateCSV
+      tags:
+        - Migration
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                csv_file:
+                  type: string
+                  format: binary
+                  description: Archivo CSV con transacciones
+              required:
+                - csv_file
+            example:
+              csv_file: "archivo.csv"
+      responses:
+        '200':
+          description: Migración exitosa
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "OK"
+        '400':
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/users/{user_id}/balance:
+    get:
+      summary: Obtener balance de usuario
+      description: Obtiene el balance, total de débitos y créditos de un usuario específico
+      operationId: getUserBalance
+      tags:
+        - Users
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: integer
+            example: 1001
+        - name: from_date
+          in: query
+          required: false
+          description: Fecha de inicio para filtrar transacciones (formato YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+        - name: to_date
+          in: query
+          required: false
+          description: Fecha de fin para filtrar transacciones (formato YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+            example: "2024-12-31"
+      responses:
+        '200':
+          description: Balance del usuario obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceInfo'
+        '400':
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    BalanceInfo:
+      type: object
+      description: Información de balance de un usuario
+      properties:
+        balance:
+          type: number
+          format: float
+          description: Balance total del usuario
+          example: 327.00
+        total_debits:
+          type: number
+          format: float
+          description: Total de débitos (montos negativos)
+          example: -75.25
+        total_credits:
+          type: number
+          format: float
+          description: Total de créditos (montos positivos)
+          example: 402.25
+      required:
+        - balance
+        - total_debits
+        - total_credits
+
+    Error:
+      type: object
+      description: Información de error
+      properties:
+        error:
+          type: string
+          description: Mensaje de error
+          example: "Usuario no encontrado"
+        code:
+          type: integer
+          description: Código de error HTTP
+          example: 404
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp del error
+          example: "2024-01-15T10:30:00Z"
+      required:
+        - error
+        - code
+
+    Transaction:
+      type: object
+      description: Transacción de usuario
+      properties:
+        id:
+          type: integer
+          description: ID único de la transacción
+          example: 1
+        user_id:
+          type: integer
+          description: ID del usuario
+          example: 1001
+        amount:
+          type: number
+          format: float
+          description: Monto de la transacción (positivo para crédito, negativo para débito)
+          example: 150.50
+        datetime:
+          type: string
+          format: date-time
+          description: Fecha y hora de la transacción
+          example: "2024-01-15T10:30:00Z"
+      required:
+        - id
+        - user_id
+        - amount
+        - datetime
+
+tags:
+  - name: Health
+    description: Endpoints relacionados con el estado de salud de la API
+  - name: Migration
+    description: Endpoints para migración de datos desde archivos CSV
+  - name: Users
+    description: Endpoints relacionados con usuarios y sus balances
