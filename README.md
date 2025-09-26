@@ -234,6 +234,7 @@ Ver `env.example` para todas las variables disponibles.
 - [X] **Pruebas de Performance**: Swagger/OpenAPI para documentación interactiva
 - [ ] **Base de datos**: Guardado permanente de las transacciones
 - [ ] **CI/CD**: Integración continua con pruebas automáticas
+- [ ] **Usar Secrets**: Cambiar las variables de entorno por secrets
 - [ ] **Monitoreo**: Mejorar de logging, monitoreo y control de errores
 - [ ] **Reportes de comportamiento de usuarios**: Promedio de saldo al mes, identificacion de temporada baja
 - [ ] **Soportar conexiones fuera del dominio**: Middleware para CORS
