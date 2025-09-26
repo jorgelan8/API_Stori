@@ -212,6 +212,7 @@ Ver `env.example` para todas las variables disponibles.
 
 - [Documentación Endpoint /migrate](api/docs/migration_endpoints.md)
 - [Documentación Endpoint /users/{user_id}/balance](api/docs/balance_endpoints.md)
+- [Documentación pruebas de stress](tests/load/README.md)
 
 
 ## 🎯 Próximos Pasos
