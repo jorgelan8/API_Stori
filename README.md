@@ -71,9 +71,9 @@ nano .env
 
 <details>
   <summary>
-  - Ejecutar el API (server) (Clicer para ver detalles)
+    Ejecutar API (Activar como server local) (Clicer para ver detalles)
   <Summary>
-  
+
 ```bash
 go run cmd/api/main.go
 ```
