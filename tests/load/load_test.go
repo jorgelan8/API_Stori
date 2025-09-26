@@ -22,7 +22,7 @@ func TestLoadMigration(t *testing.T) {
 
 	// Test with multiple concurrent requests
 	concurrency := 10          // Número de goroutines concurrentes
-	requestsPerGoroutine := 10 // Requests por goroutine
+	requestsPerGoroutine := 25 // Requests por goroutine
 	totalRequests := concurrency * requestsPerGoroutine
 
 	start := time.Now()
@@ -102,8 +102,8 @@ func TestLoadBalance(t *testing.T) {
 	test_utils.MigrateTestData(t, server.URL, 50)
 
 	// Test with multiple concurrent requests
-	concurrency := 10          // Número de goroutines concurrentes
-	requestsPerGoroutine := 10 // Requests por goroutine
+	concurrency := 10           // Número de goroutines concurrentes
+	requestsPerGoroutine := 250 // Requests por goroutine
 	totalRequests := concurrency * requestsPerGoroutine
 
 	start := time.Now()
@@ -174,8 +174,8 @@ func TestLoadBalanceWithDateRange(t *testing.T) {
 	test_utils.MigrateTestData(t, server.URL, 50)
 
 	// Test with multiple concurrent requests
-	concurrency := 10          // Número de goroutines concurrentes
-	requestsPerGoroutine := 10 // Requests por goroutine
+	concurrency := 15           // Número de goroutines concurrentes
+	requestsPerGoroutine := 250 // Requests por goroutine
 	totalRequests := concurrency * requestsPerGoroutine
 
 	start := time.Now()
@@ -234,45 +234,5 @@ func TestLoadBalanceWithDateRange(t *testing.T) {
 
 	if errorCount > 0 {
 		t.Errorf("Expected 0 errors, got %d", errorCount)
-	}
-}
-
-// Benchmark tests
-func BenchmarkMigration(b *testing.B) {
-	// Setup test server using centralized function
-	server := test_utils.SetupTestServer()
-	defer server.Close()
-
-	csvData := test_utils.GenerateTestCSV(50)
-
-	// Pre-create multipart data for benchmark
-	multipartData, contentType := test_utils.CreateMultipartFormData(csvData, "benchmark.csv")
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		req, _ := http.NewRequest("POST", server.URL+config.GetPathAPI()+"/migrate", bytes.NewReader(multipartData))
-		req.Header.Set("Content-Type", contentType)
-
-		client := &http.Client{Timeout: 10 * time.Second}
-		resp, _ := client.Do(req)
-		resp.Body.Close()
-	}
-}
-
-func BenchmarkBalance(b *testing.B) {
-	// Setup test server using centralized function
-	server := test_utils.SetupTestServer()
-	defer server.Close()
-
-	// First migrate some data using centralized function
-	test_utils.MigrateTestData(&testing.T{}, server.URL, 50)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		userID := 1001 + (i % 10)
-		url := fmt.Sprintf("%s%s/users/%d/balance", server.URL, config.GetPathAPI(), userID)
-		client := &http.Client{Timeout: 5 * time.Second}
-		resp, _ := client.Get(url)
-		resp.Body.Close()
 	}
 }

@@ -184,6 +184,18 @@ cd API_Stori
 ./run_tests.sh
 ```
 
+## Testing sofisticados
+
+- ⚡ Tests de Carga(rendimiento bajo stress) (`./tests/load/`)
+
+- **`load_test.go`** - Tests de carga con múltiples requests concurrentes 10 hilos con 25 request
+
+### Ejecutar tests de carga:
+```bash
+go test -v ./tests/load/...
+```
+
+
 ## 🔧 Variables de Entorno
 
 Ver `env.example` para todas las variables disponibles.

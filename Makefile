@@ -22,10 +22,7 @@ help:
 	@echo "  make test-unit        - Run unit tests with coverage"
 	@echo "  make test-integration - Run integration tests with coverage"
 	@echo "  make test-load        - Run load tests with coverage"
-	@echo "  make test-performance - Run performance tests with coverage"
 	@echo "  make test-all         - Run all tests with coverage"
-	@echo "  make coverage-report  - Generate HTML coverage report"
-	@echo "  make coverage-summary - Show coverage summary"
 	@echo "  make test-api         - Test API endpoints (Docker)"
 	@echo "  make test-csv         - Test CSV migration (Docker)"
 	@echo "  make test-balance     - Test balance endpoint (Docker)"
@@ -76,27 +73,9 @@ test-all:
 	@echo "🧪 Running all tests with coverage..."
 	@./run_tests.sh
 
-coverage-report:
-	@echo "📊 Generating coverage report..."
-	@go tool cover -html=coverage_all.out -o coverage_report.html
-	@echo "📈 Coverage report generated: coverage_report.html"
-
-coverage-summary:
-	@echo "📊 Coverage Summary:"
-	@echo "Unit Tests:"
-	@go tool cover -func=coverage_unit.out | tail -1
-	@echo "Integration Tests:"
-	@go tool cover -func=coverage_integration.out | tail -1
-	@echo "All Tests:"
-	@go tool cover -func=coverage_all.out | tail -1
-
 test-load:
 	@echo "🧪 Running load tests with coverage..."
 	@go test -v ./tests/load/... -cover -coverpkg=./... -coverprofile=coverage_load.out
-
-test-performance:
-	@echo "🚀 Running performance tests with coverage..."
-	@go test -v ./tests/performance/... -cover -coverpkg=./... -coverprofile=coverage_performance.out
 
 test-api:
 	@echo "🧪 Testing API endpoints (Docker on port 8081)..."
