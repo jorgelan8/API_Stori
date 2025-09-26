@@ -14,13 +14,12 @@ Este documento describe los endpoints disponibles para el servicio de migración
 
 **Ejemplo de uso con curl**:
 ```bash
-curl -X POST http://localhost:8080/api/v1/migrate \
-  -F "csv_file=@sample_transactions.csv"
+curl -X POST http://localhost:8080/api/v1/migrate -F "csv_file=@sample_transactions.csv"
 ```
 
 **Response**:
 ```
-200 OK
+HTTP/1.1 200 OK
 ```
 
 ## 📁 Formato del Archivo CSV
