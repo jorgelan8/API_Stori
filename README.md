@@ -69,16 +69,17 @@ nano .env
 ```
 </details>
 
+### Ejecutar API (Activar como server local)
 <details>
   <summary>
-    Ejecutar API (Activar como server local) (Clic para ver detalles)
+    (Clic para ver detalles)
   <summary>
 
 - Comando
 ```bash
 go run cmd/api/main.go
 ```
-
+*** Ahora ya puedes hacer request a la API ***
 </details>
 
 ### 🧪 Testing API endpoints local
