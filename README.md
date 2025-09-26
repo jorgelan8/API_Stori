@@ -40,6 +40,8 @@ API RESTful en Go para migración de transacciones y consulta de balance de usua
 - Docker (opcional) (Solo si se quiere probar localmente) (Descargalo [aquí][UrlDocker])
 
 ### Instalación local (Comandos para MacOS)
+<details>
+  <summary> Clic to details </summary>
 #### Abre una terminal y ejecuta los siguientes comandos
 
 - Clonar el repositorio
@@ -64,6 +66,7 @@ cp env.example .env
 # Editar .env con tus configuraciones, usa nano o tu editor favorito
 nano .env
 ```
+</details>
 
 - Ejecutar el API (server)
 ```bash
