@@ -31,7 +31,7 @@ API RESTful en Go para migración de transacciones y consulta de balance de usua
 - `GET /api/v1/swagger.yaml` - Especificación OpenAPI en YAML
 - `GET /api/v1/swagger.json` - Especificación OpenAPI en JSON
 
-##### [Ver Historila de cambios](CHANGELOG.md)
+##### [Ver Historial de cambios](CHANGELOG.md)
 
 ## 🛠️ Instalación y Uso
 

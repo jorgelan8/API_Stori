@@ -66,6 +66,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 ## [0.0.0] - 2024-01-23
 
 ### Añadido (Added)
+- Se instaló Go
+- Se instaló Docker
+- Se instalaron extensiones Go para Visual Studio
 - Se analizo el requerimiento.
 - Se tomo minicurso de GO.
 - Se determino la estructura para el proyecto.
